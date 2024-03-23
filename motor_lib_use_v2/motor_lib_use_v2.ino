@@ -40,14 +40,15 @@ void loop() {
   duration = pulseIn(echoPin, HIGH);
   distance = (duration/2) / 58.2;
 
-  if (distance >= 10 || distance <= 0){
+  if (distance >= 7 || distance <= 0){
     forward();
   }
   else {
-    release();
-    left();
+    backward();
     delay(1000);
     release();
+    left();
+    delay(500);
   }
 }
 
@@ -82,7 +83,6 @@ void right(void){
 void release(void){
   motor1.run(RELEASE);
   motor2.run(RELEASE);
-  delay(100);
 }
 
 void setSpeed(int spd){
