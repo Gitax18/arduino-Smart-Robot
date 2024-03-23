@@ -1,6 +1,9 @@
 
 #include "AFMotor.h"
 
+#define echoPin A5
+#define trigPin A4
+
 AF_DCMotor motor1(1);
 AF_DCMotor motor2(2);
 
@@ -21,28 +24,31 @@ run(<dir>); starts the motor takes three parameters
 
 
 void setup() {
-
+  digitalWrite(A1, HIGH);
+  digitalWrite(A2, HIGH);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
 }
 
 void loop() {
+  long duration, distance;
+  digitalWrite(trigPin, LOW); 
+  delayMicroseconds(2); 
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration/2) / 58.2;
 
-
-
-  forward();
-  delay(3000);
-  release();
-
-  left();
-  delay(750);
-  release();  
-
-  backward();
-  delay(3000);
-  release();  
-
-  right();
-  delay(750);
-  release();
+  if (distance >= 10 || distance <= 0){
+    forward();
+  }
+  else {
+    release();
+    left();
+    delay(1000);
+    release();
+  }
 }
 
 void forward(void){
