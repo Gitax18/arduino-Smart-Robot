@@ -5,6 +5,8 @@
 #define trigPin A4
 #define IR1 A3
 #define IR2 A2
+#define IR3 9
+#define IR4 10
 
 AF_DCMotor motor1(1);
 AF_DCMotor motor2(2);
@@ -25,9 +27,12 @@ void setup() {
   pinMode(echoPin, INPUT);
   pinMode(IR1, INPUT);
   pinMode(IR2, INPUT);
+  pinMode(IR3, INPUT);
+  pinMode(IR4, INPUT);
 }
 
 void loop() {
+  // Read Distance from front
   long duration, distance;
   digitalWrite(trigPin, LOW); 
   delayMicroseconds(2); 
@@ -37,9 +42,12 @@ void loop() {
   duration = pulseIn(echoPin, HIGH);
   distance = (duration/2) / 58.2;
 
+  // Check edge from front
   checkForwardEdge(IR1,IR2);
+  checkBackwardEdge(IR3,IR4);
 
-  if (distance >= 7 || distance <= 0){
+  // Motor control code
+  if (distance >= 10 || distance <= 0){
     forward();
   }
   else {
