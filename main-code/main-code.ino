@@ -3,10 +3,9 @@
 
 #define echoPin A5
 #define trigPin A4
-#define IR1 A3
-#define IR2 A2
-#define IR3 9
-#define IR4 10
+#define IRRight A3
+#define IRLeft A2
+
 
 AF_DCMotor motor1(1);
 AF_DCMotor motor2(2);
@@ -17,18 +16,13 @@ void setSpeed(int spd);
 void left(void);
 void right(void);
 void release(void);
-void checkForwardEdge(int ir1, int ir2);
-void checkBackwardEdge(int ir3, int ir4);
-
 
 void setup() {
   Serial.begin(9600);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
-  pinMode(IR1, INPUT);
-  pinMode(IR2, INPUT);
-  pinMode(IR3, INPUT);
-  pinMode(IR4, INPUT);
+  pinMode(IRLeft, INPUT);
+  pinMode(IRRight, INPUT);
 }
 
 void loop() {
@@ -42,12 +36,19 @@ void loop() {
   duration = pulseIn(echoPin, HIGH);
   distance = (duration/2) / 58.2;
 
-  // Check edge from front
-  checkForwardEdge(IR1,IR2);
-  checkBackwardEdge(IR3,IR4);
-
+    
   // Motor control code
   if (distance >= 10 || distance <= 0){
+    if(digitalRead(IRLeft) == LOW){
+      // release();
+      // delay(500);
+      right();
+      delay(500);
+    }
+    else if(digitalRead(IRRight) == LOW){
+      left();
+      delay(500);
+    }
     forward();
   }
   else {
@@ -97,27 +98,4 @@ void release(void){
 void setSpeed(int spd){
   motor1.setSpeed(spd);
   motor2.setSpeed(spd);
-}
-
-void checkForwardEdge(int ir1, int ir2){
-  if(digitalRead(ir1) == HIGH || digitalRead(ir2) == HIGH){
-    Serial.println("EDGE FORWARD");
-    backward();
-    delay(500);
-    release();
-    right();
-    delay(500);
-  }
-
-}
-
-void checkBackwardEdge(int ir3, int ir4){
-  if(digitalRead(ir3) == HIGH || digitalRead(ir4) == HIGH){
-    Serial.println("EDGE BACKWARD");
-    forward();
-    delay(500);
-    release();
-    right();
-    delay(500);
-  }
 }
